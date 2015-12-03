@@ -7,6 +7,7 @@ from sklearn import datasets, svm, cross_validation
 #Loading Data
 data = datasets.load_diabetes()
 
+#[[1,2,3],4,[[5],[6]]] -> [1,2,3,4,5,6]
 def flatten_array(array):
     ret = []
     for a in array:
