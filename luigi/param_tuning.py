@@ -17,7 +17,7 @@ def flatten_array(array):
             ret.append(a)
     return ret;
 
-class param_eval(luigi.Task):
+class task_param_eval(luigi.Task):
     data = luigi.Parameter()
     C = luigi.FloatParameter()
     gamma = luigi.FloatParameter()
@@ -36,7 +36,7 @@ class param_eval(luigi.Task):
             out_file.write( str(np.mean(results)) ); 
         
 
-class param_tuning(luigi.Task):
+class task_param_tuning(luigi.Task):
 
     cost_list = luigi.Parameter(default="1,2,5,10")
     gamma_list = luigi.Parameter(default="1,2,5,10")
@@ -47,7 +47,7 @@ class param_tuning(luigi.Task):
         return flatten_array(
             map(lambda C:
                     map(lambda gamma:
-                            param_eval(data=frozenset(self.data), # values should be hashable 
+                            task_param_eval(data=frozenset(self.data), # values should be hashable 
                                        C=float(C), gamma=float(gamma)),
                         self.cost_list.split(",")),
                 self.gamma_list.split(",")))
