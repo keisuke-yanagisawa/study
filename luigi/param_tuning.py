@@ -61,8 +61,6 @@ class task_param_tuning(luigi.Task):
             with task.output().open() as taskfile:
                 results[(task.C, task.gamma)] = float(taskfile.read())
         
-        print results
-
         best_key = min(results,  key=results.get)
         with self.output().open("w") as out_file:
             out_file.write("%s,%s,%.4f\n" %(best_key[0], best_key[1], results[best_key]))
