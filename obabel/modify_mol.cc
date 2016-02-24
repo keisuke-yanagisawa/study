@@ -4,37 +4,29 @@
 
 #include <openbabel/mol.h>
 #include <openbabel/obconversion.h>
+#include <openbabel/generic.h>
 
 int main(int argc, char** argv){
 
   // smilesからOBMolを生成
-  std::string smiles = "c1ccc2ccccc2c1";
-  std::stringstream ss(smiles);
-  OpenBabel::OBConversion conv(&ss);
-  conv.SetInFormat("smi");
+  std::ifstream ifs("./data/test.sdf");
+  OpenBabel::OBConversion in_conv(&ifs);
+  in_conv.SetInFormat("sdf");
   OpenBabel::OBMol mol;
-  conv.Read(&mol);
+  in_conv.Read(&mol);
 
-  // OBMolのAtomsを出力
-  std::cout << "Atom information" << std::endl;
-  std::cout << "AtomId AtomIdx" << std::endl;
-  for(OpenBabel::OBAtomIterator ait = mol.BeginAtoms(); ait!=mol.EndAtoms(); ++ait){
-    std::cout << (*ait)->GetId()
-              << " "
-              << (*ait)->GetIdx()
-              << std::endl;
-  }
-  std::cout << std::endl;
+  std::cout << mol.GetData("i_m_source_file_index")->GetValue() << std::endl;
+  //これで情報の読み込みができる
 
+  OpenBabel::OBPairData* comment = new OpenBabel::OBPairData();
+  comment->SetValue("Test");     // 内容
+  comment->SetAttribute("test"); // 題名
+  mol.SetData(comment);
 
-  // OBMolのBondsを出力
-  std::cout << "Bond information" << std::endl;
-  std::cout << "BeginAtomIdx EndAtomIdx" << std::endl;
-  for(OpenBabel::OBBondIterator bit = mol.BeginBonds(); bit!=mol.EndBonds(); ++bit){
-    std::cout << (*bit)->GetBeginAtomIdx()
-              << " "
-              <<(*bit)->GetEndAtomIdx()
-              << std::endl;
-  }
+  std::ofstream ofs("hoge.sdf");
+  OpenBabel::OBConversion out_conv;
+  out_conv.SetOutFormat("sdf");
+  out_conv.Write(&mol, &ofs);
+
   return 0;
 }
