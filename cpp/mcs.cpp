@@ -24,7 +24,15 @@ void output(std::vector<int> v){
   std::cout << std::endl;
 }
 
-int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj, std::stack<job*> &st){
+int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj){
+  std::stack<job*> st;
+  
+  //initialize
+  for(int i=0; i<num_vertex; i++){//making initial state
+    st.push(new job(i));
+  }
+
+  // searching mcs based on DFS
   while(!st.empty()){
     job* now = st.top();
     st.pop();
@@ -60,11 +68,6 @@ int main(){
   adj_m(1,3) = 1;
   adj_m(2,3) = 1;
   
-  std::stack<job*> st;
-  for(int i=0; i<num_vertex; i++){//making initial state
-    st.push(new job(i));
-  }
-
-  solve(num_vertex, adj_m, st);
+  solve(num_vertex, adj_m);
   
 }
