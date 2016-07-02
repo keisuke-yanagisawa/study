@@ -8,6 +8,8 @@
 #include <map>
 #include <stack>
 
+#include "dimacs_read.hpp"
+
 #define NUM_VERTEX 5
 
 using namespace boost::numeric;
@@ -24,7 +26,8 @@ void output(std::vector<int> v){
   std::cout << std::endl;
 }
 
-int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj){
+int solve(const ublas::symmetric_matrix<bool> &adj){
+  int num_vertex = adj.size1();
   std::stack<job*> st;
   
   //initialize
@@ -43,7 +46,6 @@ int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj){
     
     for(std::vector<int>::iterator iter = now->v.begin(); iter != now->v.end(); iter++){
       temp = ublas::element_prod(temp, ublas::row(adj, *iter));
-      std::cout << temp << std::endl;
     }
 
     for(int i=0; i<now->v.back(); i++){
@@ -59,15 +61,9 @@ int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj){
   }
 }
 
-int main(){
-  int num_vertex = NUM_VERTEX;
-  ublas::symmetric_matrix<bool> adj_m(num_vertex, num_vertex);
-  adj_m(0,2) = 1;
-  adj_m(0,4) = 1;
-  adj_m(1,2) = 1;
-  adj_m(1,3) = 1;
-  adj_m(2,3) = 1;
+int main(int argc, char *argv[]){
+  ublas::symmetric_matrix<bool> adj_m = myutil::read_data(argv[1]);
   
-  solve(num_vertex, adj_m);
+  solve(adj_m);
   
 }

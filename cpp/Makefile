@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=
+CXXFLAGS=-O3
 BOOST_INSTALL_PATH ?= /usr
 
 BOOSTIP=-I$(BOOST_INSTALL_PATH)/include
@@ -9,7 +9,7 @@ BOOSTLP=-L$(BOOST_INSTALL_PATH)/lib64 -L$(BOOST_INSTALL_PATH)/lib
 
 ALL = objs mcs
 
-MCS_OBJS = objs/mcs.o
+MCS_OBJS = objs/mcs.o objs/dimacs_read.o
 
 .PHONY: clean all
 
@@ -20,7 +20,10 @@ objs:
 
 mcs: $(MCS_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ 
-objs/mcs.o: mcs.cpp
+objs/%.o: %.cpp %.hpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+objs/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:
