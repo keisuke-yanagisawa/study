@@ -1,3 +1,7 @@
+#include <boost/numeric/ublas/symmetric.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
+#include <boost/numeric/ublas/io.hpp>
+
 #include <iostream>
 #include <set>
 #include <vector>
@@ -5,6 +9,8 @@
 #include <stack>
 
 #define NUM_VERTEX 5
+
+using namespace boost::numeric;
 
 struct job{
   std::vector<int> v;
@@ -24,23 +30,24 @@ void output(bool a[NUM_VERTEX]){
   std::cout << std::endl;
 }
 
-int solve(int num_vertex, const bool adj[NUM_VERTEX][NUM_VERTEX], std::stack<job*> &st){
+int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj, std::stack<job*> &st){
   while(!st.empty()){
     job* now = st.top();
     st.pop();
 
-    bool temp[num_vertex];
+
+    ublas::vector<bool> temp(num_vertex);
     for(int i=0; i<num_vertex; i++){
       temp[i] = true;
     }
     
     for(std::vector<int>::iterator iter = now->v.begin(); iter != now->v.end(); iter++){
+      ublas::matrix_row<const ublas::symmetric_matrix<bool> > arow(adj, *iter);
       for(int i=0; i<num_vertex; i++){
-	temp[i] &= adj[*iter][i];
+	temp[i] &= arow[i];
       }
+      std::cout << temp << std::endl;
     }
-
-    output(temp);
 
     for(int i=0; i<now->v.back(); i++){
       if(temp[i]){
@@ -57,17 +64,18 @@ int solve(int num_vertex, const bool adj[NUM_VERTEX][NUM_VERTEX], std::stack<job
 
 int main(){
   int num_vertex = NUM_VERTEX;
-  bool adj[NUM_VERTEX][NUM_VERTEX] = {{0,0,1,0,1},
-				      {0,0,1,1,0},
-				      {1,1,0,1,0},
-				      {0,1,1,0,0},
-				      {1,0,0,0,0}};
-
+  ublas::symmetric_matrix<bool> adj_m(num_vertex, num_vertex);
+  adj_m(0,2) = 1;
+  adj_m(0,4) = 1;
+  adj_m(1,2) = 1;
+  adj_m(1,3) = 1;
+  adj_m(2,3) = 1;
+  
   std::stack<job*> st;
   for(int i=0; i<num_vertex; i++){//making initial state
     st.push(new job(i));
   }
 
-  solve(num_vertex, adj, st);
+  solve(num_vertex, adj_m, st);
   
 }
