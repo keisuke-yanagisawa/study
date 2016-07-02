@@ -23,12 +23,6 @@ void output(std::vector<int> v){
     std::cout << *i << ' ';
   std::cout << std::endl;
 }
-void output(bool a[NUM_VERTEX]){
-  for(int i=0; i<NUM_VERTEX; i++){
-    std::cout << a[i] << " ";
-  }
-  std::cout << std::endl;
-}
 
 int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj, std::stack<job*> &st){
   while(!st.empty()){
@@ -37,15 +31,11 @@ int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj, std::stack<j
 
 
     ublas::vector<bool> temp(num_vertex);
-    for(int i=0; i<num_vertex; i++){
-      temp[i] = true;
-    }
+    std::fill(temp.begin(), temp.end(), true);
     
     for(std::vector<int>::iterator iter = now->v.begin(); iter != now->v.end(); iter++){
       ublas::matrix_row<const ublas::symmetric_matrix<bool> > arow(adj, *iter);
-      for(int i=0; i<num_vertex; i++){
-	temp[i] &= arow[i];
-      }
+      temp = ublas::element_prod(temp, arow);
       std::cout << temp << std::endl;
     }
 
