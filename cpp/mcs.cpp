@@ -4,6 +4,8 @@
 #include <map>
 #include <stack>
 
+#define NUM_VERTEX 5
+
 struct job{
   std::vector<int> v;
   job(int vertex){v.push_back(vertex);}
@@ -15,19 +17,34 @@ void output(std::vector<int> v){
     std::cout << *i << ' ';
   std::cout << std::endl;
 }
+void output(bool a[NUM_VERTEX]){
+  for(int i=0; i<NUM_VERTEX; i++){
+    std::cout << a[i] << " ";
+  }
+  std::cout << std::endl;
+}
 
-int solve(int num_vertex, const std::multimap<int, int> &e, std::stack<job*> &st){
+int solve(int num_vertex, const bool adj[NUM_VERTEX][NUM_VERTEX], std::stack<job*> &st){
   while(!st.empty()){
     job* now = st.top();
     st.pop();
-    
-    auto range = e.equal_range(now->v.back());
-    //これだと直前のvertexしか見ていないけど、すべてのvertexを見て次のvertexを得ていいか決定しなければならない。
-    for(auto iter = range.first; iter!=range.second; iter++){
-      job* newjob = new job();
-      newjob->v = now->v;
-      newjob->v.push_back(iter->second);
-      st.push(newjob);
+
+    bool temp[num_vertex] = {true,true,true,true,true};
+    for(auto iter = now->v.begin(); iter != now->v.end(); iter++){
+      for(int i=0; i<num_vertex; i++){
+	temp[i] &= adj[*iter][i];
+      }
+    }
+
+    output(temp);
+
+    for(int i=0; i<num_vertex; i++){
+      if(temp[i]){
+	job* newjob = new job();
+	newjob->v = now->v;
+	newjob->v.push_back(i);
+	st.push(newjob);
+      }
     }
     
     output(now->v);
@@ -35,24 +52,18 @@ int solve(int num_vertex, const std::multimap<int, int> &e, std::stack<job*> &st
 }
 
 int main(){
-  int num_vertex = 5;
-  std::multimap<int, int> e;
+  int num_vertex = NUM_VERTEX;
+  bool adj[NUM_VERTEX][NUM_VERTEX] = {{0,0,1,0,1},
+				      {0,0,1,1,0},
+				      {1,1,0,1,0},
+				      {0,1,1,0,0},
+				      {1,0,0,0,0}};
 
-  e.insert(std::pair<int, int>(0,2));
-  e.insert(std::pair<int, int>(0,4));
-  e.insert(std::pair<int, int>(1,2));
-  e.insert(std::pair<int, int>(1,3));
-  e.insert(std::pair<int, int>(2,3));
-  
   std::stack<job*> st;
-  st.push(new job(0));
-  st.push(new job(1));
-  st.push(new job(2));
-  st.push(new job(3));
-  st.push(new job(4));  
+  for(int i=0; i<num_vertex; i++){//making initial state
+    st.push(new job(i));
+  }
 
-  solve(num_vertex, e, st);
+  solve(num_vertex, adj, st);
   
-  std::cout << "test" << std::endl;
-
 }
