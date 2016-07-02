@@ -34,8 +34,7 @@ int solve(int num_vertex, const ublas::symmetric_matrix<bool> &adj, std::stack<j
     std::fill(temp.begin(), temp.end(), true);
     
     for(std::vector<int>::iterator iter = now->v.begin(); iter != now->v.end(); iter++){
-      ublas::matrix_row<const ublas::symmetric_matrix<bool> > arow(adj, *iter);
-      temp = ublas::element_prod(temp, arow);
+      temp = ublas::element_prod(temp, ublas::row(adj, *iter));
       std::cout << temp << std::endl;
     }
 
