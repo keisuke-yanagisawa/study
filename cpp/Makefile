@@ -1,5 +1,5 @@
-CXX=/usr/apps.sp3/nosupport/gsic/gcc/5.2/bin/g++ 
-CXXFLAGS=-std=c++11
+CXX=g++
+CXXFLAGS=
 BOOST_INSTALL_PATH ?= /usr
 
 BOOSTIP=-I$(BOOST_INSTALL_PATH)/include

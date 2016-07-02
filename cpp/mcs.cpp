@@ -13,7 +13,7 @@ struct job{
 };
 
 void output(std::vector<int> v){
-  for (auto i = v.begin(); i != v.end(); ++i)
+  for (std::vector<int>::iterator i = v.begin(); i != v.end(); ++i)
     std::cout << *i << ' ';
   std::cout << std::endl;
 }
@@ -29,8 +29,12 @@ int solve(int num_vertex, const bool adj[NUM_VERTEX][NUM_VERTEX], std::stack<job
     job* now = st.top();
     st.pop();
 
-    bool temp[num_vertex] = {true,true,true,true,true};
-    for(auto iter = now->v.begin(); iter != now->v.end(); iter++){
+    bool temp[num_vertex];
+    for(int i=0; i<num_vertex; i++){
+      temp[i] = true;
+    }
+    
+    for(std::vector<int>::iterator iter = now->v.begin(); iter != now->v.end(); iter++){
       for(int i=0; i<num_vertex; i++){
 	temp[i] &= adj[*iter][i];
       }
@@ -38,7 +42,7 @@ int solve(int num_vertex, const bool adj[NUM_VERTEX][NUM_VERTEX], std::stack<job
 
     output(temp);
 
-    for(int i=0; i<num_vertex; i++){
+    for(int i=0; i<now->v.back(); i++){
       if(temp[i]){
 	job* newjob = new job();
 	newjob->v = now->v;
